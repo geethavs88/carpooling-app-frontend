@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
-function HomeScreen() {
+function HomeScreen({ navigation }) {
+   
     return (
     <View style={styles.homeInputContainer}>
-        <PrimaryButton>Schedule Ride</PrimaryButton>
-        <PrimaryButton>Schedule Drive</PrimaryButton>
-        <PrimaryButton>My Commutes</PrimaryButton>
-        <PrimaryButton>My Profile</PrimaryButton>
+        <PrimaryButton onPress={() => navigation.navigate('ScheduleRide')}>Schedule Ride</PrimaryButton>
+        <PrimaryButton onPress={() => navigation.navigate('ScheduleDrive')}>Schedule Drive</PrimaryButton>
+        <PrimaryButton onPress={() => navigation.navigate('MyCommutes')}>My Commutes</PrimaryButton>
+        <PrimaryButton onPress={() => navigation.navigate('MyProfile')}>My Profile</PrimaryButton>
     </View>
     );
     
