@@ -6,6 +6,9 @@ import RideScheduleScreen from './screens/RideScheduleScreen';
 import DriveScheduleScreen from './screens/DriveScheduleScreen';
 import MyCommutesScreen from './screens/MyCommutesScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import AvailableRidesScreen from './screens/AvailableRidesScreen';
+
+
 const Stack = createNativeStackNavigator();
 export default function App() {
   return (
@@ -16,6 +19,7 @@ export default function App() {
         <Stack.Screen name="ScheduleDrive" component={DriveScheduleScreen}/>
         <Stack.Screen name="MyCommutes" component={MyCommutesScreen}/>
         <Stack.Screen name="MyProfile" component={ProfileScreen}/>
+        <Stack.Screen name="AvailableRides" component={AvailableRidesScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
