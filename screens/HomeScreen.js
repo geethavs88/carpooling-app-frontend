@@ -8,6 +8,7 @@ function HomeScreen({ navigation }) {
         <PrimaryButton onPress={() => navigation.navigate('ScheduleDrive')}>Schedule Drive</PrimaryButton>
         <PrimaryButton onPress={() => navigation.navigate('MyCommutes')}>My Commutes</PrimaryButton>
         <PrimaryButton onPress={() => navigation.navigate('MyProfile')}>My Profile</PrimaryButton>
+        <PrimaryButton onPress={() => navigation.navigate('Login')}>Login</PrimaryButton>
     </View>
     );
     
