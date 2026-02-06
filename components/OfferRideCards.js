@@ -16,7 +16,7 @@ const OfferRideCards = ({ ride, requestedRideIds, onRequestRide }) =>{
                 disabled={isRequested}  
                 onPress={() => onRequestRide(ride.id)}>
                 <Text style={styles.buttonText}>
-                    {isRequested ? 'Requested' : 'Offer Ride'}
+                    {isRequested ? 'Requested' : 'Request Ride'}
                 </Text>
             </TouchableOpacity>
         </View>

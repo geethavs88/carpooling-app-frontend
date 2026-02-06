@@ -61,12 +61,8 @@ export const postRide = async ({
 
         }),
     });
-    if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || 'Failed to create ride');
-    }
-    const data = await response.json();
-    return data;
+
+    return response;
 };
 
 
