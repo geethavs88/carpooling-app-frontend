@@ -1,16 +1,24 @@
 import { View, Text, Button, StyleSheet} from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
-const OfferRideCards = ({ ride }) =>{
+const OfferRideCards = ({ ride, requestedRideIds, onRequestRide }) =>{
+    const isRequested = requestedRideIds.includes(ride.id);
     return (
         <View style={styles.cardStyle}>
-            <Text style={styles.driverFont}>Driver : {ride.driver}</Text>
-            <Text>From: {ride.start}</Text>
-            <Text>To: {ride.end}</Text>
-            <Text>Start: {ride.startDateTime}</Text>
-            <Text>End: {ride.endDateTime}</Text>
-            <Text>Seats: {ride.seats}</Text>
-
-            <Button title="Offer Ride"  />
+            <Text style={styles.driverFont}>Driver : {ride.carpooler}</Text>
+            <Text>From: {ride.start_location}</Text>
+            <Text>To: {ride.end_location}</Text>
+            <Text>Start: {new Date(ride.earliest_time).toLocaleString()}</Text>
+            <Text>End: {new Date(ride.latest_time).toLocaleString()}</Text>
+            <Text>Seats: {ride.available_seats}</Text>
+            <TouchableOpacity
+                style={[styles.requestButton, isRequested && styles.disabledButton]}
+                disabled={isRequested}  
+                onPress={() => onRequestRide(ride.id)}>
+                <Text style={styles.buttonText}>
+                    {isRequested ? 'Requested' : 'Offer Ride'}
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -24,6 +32,20 @@ const styles = StyleSheet.create({
     },
     driverFont: {
         fontWeight: 'bold',
-    }
+    },
+    requestButton: {
+        marginTop: 8,
+        padding: 10,
+        backgroundColor: '#007bff',
+        borderRadius: 6,
+        alignItems: 'center',
+    },
+    disabledButton: {
+        backgroundColor: '#aaa',
+    },
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
 });
 export default OfferRideCards;

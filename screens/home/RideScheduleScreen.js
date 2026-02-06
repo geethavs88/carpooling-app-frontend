@@ -9,7 +9,7 @@ function RideScheduleScreen({ navigation }) {
     const [startLocation, setStartLocation] = useState('');
     const [destination, setDestination] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState(null);
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
     const [activePicker, setActivePicker] = useState(null); 
@@ -28,17 +28,20 @@ function RideScheduleScreen({ navigation }) {
         setDate(date);
         hideDatePicker();
     };
-    const handleConfirmTime = (selectedTime) => {
+    const handleConfirmTime = (scheduleTime) => {
         if (activePicker === 'start') {
-            setStartTime(selectedTime);
+            setStartTime(scheduleTime);
+            console.log("Start Time: ", scheduleTime);
         } else if (activePicker === 'end') {
-            setEndTime(selectedTime);
+            setEndTime(scheduleTime);
+            console.log("End Time: ", scheduleTime);
         }
         setActivePicker(null);
     };
-    const buildLocalDateTime = (date, time) => {
+    const buildLocalDateTime = (date, scheduleTime) => {
         const combined = new Date(date);
-        combined.setHours(time.getHours(), time.getMinutes(), 0, 0);
+        combined.setHours(scheduleTime.getHours(), scheduleTime.getMinutes(), 0, 0);
+        console.warn("Combined DateTime: ", combined);
         return combined;
     };
 
