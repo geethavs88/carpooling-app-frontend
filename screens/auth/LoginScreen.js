@@ -8,11 +8,11 @@ import {
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialIcons, Ionicons } from '@expo/vector-icons'
-import Google from '../assets/google.png'
-import Facebook from '../assets/facebook.png'
-import Twitter from '../assets/Twitter.png'
+// import Google from '../../assets/google.png'
+// import Facebook from '../../assets/facebook.png'
+// import Twitter from '../../assets/Twitter.png'
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation, handleLogin }) => {
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
       <View style={{ alignItems: 'center', paddingHorizontal: 25 }}>
@@ -84,7 +84,8 @@ const LoginScreen = ({ navigation }) => {
         </View>
 
         {/* Login Button */}
-        <TouchableOpacity
+        {/* <TouchableOpacity onPress={() => {navigation.navigate('AppTabs', {screen: 'Home'})}} */}
+        <TouchableOpacity onPress={handleLogin}
           style={{
             backgroundColor: '#AD40AF',
             padding: 20,
@@ -115,7 +116,7 @@ const LoginScreen = ({ navigation }) => {
           or, login with ...
         </Text>
 
-        {/* Social Buttons */}
+        {/* Social Buttons
         <View
           style={{
             flexDirection: 'row',
@@ -159,7 +160,7 @@ const LoginScreen = ({ navigation }) => {
           >
             <Image source={Twitter} style={{ width: 24, height: 24 }} />
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         {/* Register */}
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
