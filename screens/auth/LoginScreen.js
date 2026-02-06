@@ -8,11 +8,14 @@ import {
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialIcons, Ionicons } from '@expo/vector-icons'
-// import Google from '../../assets/google.png'
-// import Facebook from '../../assets/facebook.png'
-// import Twitter from '../../assets/Twitter.png'
 
-const LoginScreen = ({ navigation, handleLogin }) => {
+
+const LoginScreen = ({ navigation, setIsLoggedIn }) => {
+  const handleLogin = () => {
+    // Perform login logic here
+    // On successful login, update the state
+    setIsLoggedIn(true);
+  };
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
       <View style={{ alignItems: 'center', paddingHorizontal: 25 }}>
@@ -83,8 +86,7 @@ const LoginScreen = ({ navigation, handleLogin }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Login Button */}
-        {/* <TouchableOpacity onPress={() => {navigation.navigate('AppTabs', {screen: 'Home'})}} */}
+       
         <TouchableOpacity onPress={handleLogin}
           style={{
             backgroundColor: '#AD40AF',
@@ -106,7 +108,7 @@ const LoginScreen = ({ navigation, handleLogin }) => {
           </Text>
         </TouchableOpacity>
 
-        <Text
+        {/* <Text
           style={{
             textAlign: 'center',
             color: '#666',
@@ -114,7 +116,7 @@ const LoginScreen = ({ navigation, handleLogin }) => {
           }}
         >
           or, login with ...
-        </Text>
+        </Text> */}
 
         {/* Social Buttons
         <View

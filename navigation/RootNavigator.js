@@ -6,36 +6,14 @@ import AppTabs from './AppTabs';
 
 
 function RootNavigator() {
-    const [userLoggedIn, setUserLoggedIn] = useState(false);
-    const [isLoading, setIsLoading] = useState(false); 
-
-    const handleLogin = () => {
-        // Implement your actual login logic here
-        setUserLoggedIn(true);
-    };
-
-    const handleLogout = () => {
-        setUserLoggedIn(false);
-    };
-
-    if (isLoading) {
-        return (
-            <NavigationContainer>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    <ActivityIndicator size="large" />
-                </View>
-            </NavigationContainer>
-        );
-    }
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     return (
         <NavigationContainer>
-            {userLoggedIn ? (
-                // Renders only AppTabs if userLoggedIn is true
-                <AppTabs handleLogout={handleLogout} /> 
+            {isLoggedIn ? (
+                <AppTabs />
             ) : (
-                // Renders only AuthStack if userLoggedIn is false
-                <AuthStack handleLogin={handleLogin} />
+                <AuthStack setIsLoggedIn={setIsLoggedIn} />
             )}
         </NavigationContainer>
     );

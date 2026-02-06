@@ -4,19 +4,18 @@ import RegisterScreen from '../screens/auth/RegisterScreen';
 
 const Stack = createNativeStackNavigator();
 
-function AuthStack({ handleLogin }) { // Accept handleLogin as a prop
+function AuthStack({ setIsLoggedIn }) {
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {/* Pass the handleLogin function to the LoginScreen */}
-            <Stack.Screen 
-                name="Login" 
-                component={(props) => <LoginScreen {...props} handleLogin={handleLogin} />} 
-            />
+        <Stack.Navigator>
+            <Stack.Screen name="Login">
+                {(props) => (
+                    <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />
+                )}
+            </Stack.Screen>
             <Stack.Screen name="Register" component={RegisterScreen} />
         </Stack.Navigator>
     );
 }
-
 // function AuthStack() {
 //     return (
 //         <Stack.Navigator screenOptions={{ headerShown: false }}>
