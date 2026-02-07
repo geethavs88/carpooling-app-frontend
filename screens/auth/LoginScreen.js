@@ -5,16 +5,30 @@ import {
   TextInput,
   Image,
   } from 'react-native'
-
+import { useState } from 'react';
+import { Alert } from 'react-native';
+import { login } from '../../api/login';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialIcons, Ionicons } from '@expo/vector-icons'
 
 
 const LoginScreen = ({ navigation, setIsLoggedIn }) => {
-  const handleLogin = () => {
+  const [username,setUsername] = useState('');
+  const [password,setPassword] = useState('');
+  const handleLogin = async () => {
     // Perform login logic here
     // On successful login, update the state
-    setIsLoggedIn(true);
+    try {
+        const user = await login(username,password);
+        console.log('User logged in:', user);
+        setIsLoggedIn(true);
+    
+      // navigation.replace('Home', { user });
+    } catch (error) {
+        Alert.alert('Login failed', 'Invalid credentials');
+    }
+    
+    // setIsLoggedIn(true);
   };
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
@@ -32,7 +46,7 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
           Login 
         </Text>
 
-        {/* Email */}
+        {/* username */}
         <View
           style={{
             flexDirection: 'row',
@@ -44,15 +58,16 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
           }}
         >
           <MaterialIcons
-            name="alternate-email"
+            name="person-outline"
             size={20}
             color="#666"
             style={{ marginRight: 5 }}
           />
           <TextInput
-            placeholder="Email ID"
+            placeholder="username"
             style={{ flex: 1, paddingVertical: 0 }}
-            keyboardType="email-address"
+            keyboardType="default"
+            onChangeText={setUsername}
           />
         </View>
 
@@ -68,7 +83,7 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
           }}
         >
           <Ionicons
-            name="ios-lock-closed-outline"
+            name="lock-closed-outline"
             size={20}
             color="#666"
             style={{ marginRight: 5 }}
@@ -77,6 +92,7 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
             placeholder="Password"
             style={{ flex: 1, paddingVertical: 0 }}
             secureTextEntry={true}
+            onChangeText={setPassword}
           />
 
           <TouchableOpacity>
@@ -108,63 +124,6 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
           </Text>
         </TouchableOpacity>
 
-        {/* <Text
-          style={{
-            textAlign: 'center',
-            color: '#666',
-            marginBottom: 30
-          }}
-        >
-          or, login with ...
-        </Text> */}
-
-        {/* Social Buttons
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 30,
-            width: '100%'
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              borderColor: '#ddd',
-              borderWidth: 2,
-              borderRadius: 10,
-              paddingHorizontal: 30,
-              paddingVertical: 10
-            }}
-          >
-            <Image source={Google} style={{ width: 24, height: 24 }} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{
-              borderColor: '#ddd',
-              borderWidth: 2,
-              borderRadius: 10,
-              paddingHorizontal: 30,
-              paddingVertical: 10
-            }}
-          >
-            <Image source={Facebook} style={{ width: 24, height: 24 }} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{
-              borderColor: '#ddd',
-              borderWidth: 2,
-              borderRadius: 10,
-              paddingHorizontal: 30,
-              paddingVertical: 10
-            }}
-          >
-            <Image source={Twitter} style={{ width: 24, height: 24 }} />
-          </TouchableOpacity>
-        </View> */}
-
-        {/* Register */}
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
             <Text>New to the App?</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Register')}>
