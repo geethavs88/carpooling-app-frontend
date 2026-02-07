@@ -1,22 +1,60 @@
+import React, { useState } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   TextInput,
-  Image,
-  } from 'react-native'
+  Alert,
+  ActivityIndicator
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { MaterialIcons, Ionicons } from '@expo/vector-icons'
-import Google from '../assets/google.png'
-import Facebook from '../assets/facebook.png'
-import Twitter from '../assets/Twitter.png'
+// Set your Render backend URL here
+const BASE_URL = 'https://carpooling-backend-application.onrender.com/api';
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation, setIsLoggedIn }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter both email and password');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${BASE_URL}/users/login/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Login successful
+        setIsLoggedIn(true);
+      } else {
+        // Login failed
+        Alert.alert('Login Failed', data.detail || 'Invalid credentials');
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
       <View style={{ alignItems: 'center', paddingHorizontal: 25 }}>
-
         <Text
           style={{
             fontFamily: 'Roboto-Medium',
@@ -50,6 +88,8 @@ const LoginScreen = ({ navigation }) => {
             placeholder="Email ID"
             style={{ flex: 1, paddingVertical: 0 }}
             keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
           />
         </View>
 
@@ -65,7 +105,7 @@ const LoginScreen = ({ navigation }) => {
           }}
         >
           <Ionicons
-            name="ios-lock-closed-outline"
+            name="lock-closed-outline"
             size={20}
             color="#666"
             style={{ marginRight: 5 }}
@@ -74,8 +114,9 @@ const LoginScreen = ({ navigation }) => {
             placeholder="Password"
             style={{ flex: 1, paddingVertical: 0 }}
             secureTextEntry={true}
+            value={password}
+            onChangeText={setPassword}
           />
-
           <TouchableOpacity>
             <Text style={{ color: '#AD40AF', fontWeight: '700' }}>
               Forgot?
@@ -85,93 +126,43 @@ const LoginScreen = ({ navigation }) => {
 
         {/* Login Button */}
         <TouchableOpacity
+          onPress={handleLogin}
           style={{
             backgroundColor: '#AD40AF',
             padding: 20,
             borderRadius: 10,
             marginBottom: 30,
-            width: '100%'
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center'
           }}
         >
-          <Text
-            style={{
-              textAlign: 'center',
-              fontWeight: '700',
-              fontSize: 16,
-              color: '#fff'
-            }}
-          >
-            Login
-          </Text>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text
+              style={{
+                textAlign: 'center',
+                fontWeight: '700',
+                fontSize: 16,
+                color: '#fff'
+              }}
+            >
+              Login
+            </Text>
+          )}
         </TouchableOpacity>
-
-        <Text
-          style={{
-            textAlign: 'center',
-            color: '#666',
-            marginBottom: 30
-          }}
-        >
-          or, login with ...
-        </Text>
-
-        {/* Social Buttons */}
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginBottom: 30,
-            width: '100%'
-          }}
-        >
-          <TouchableOpacity
-            style={{
-              borderColor: '#ddd',
-              borderWidth: 2,
-              borderRadius: 10,
-              paddingHorizontal: 30,
-              paddingVertical: 10
-            }}
-          >
-            <Image source={Google} style={{ width: 24, height: 24 }} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{
-              borderColor: '#ddd',
-              borderWidth: 2,
-              borderRadius: 10,
-              paddingHorizontal: 30,
-              paddingVertical: 10
-            }}
-          >
-            <Image source={Facebook} style={{ width: 24, height: 24 }} />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={{
-              borderColor: '#ddd',
-              borderWidth: 2,
-              borderRadius: 10,
-              paddingHorizontal: 30,
-              paddingVertical: 10
-            }}
-          >
-            <Image source={Twitter} style={{ width: 24, height: 24 }} />
-          </TouchableOpacity>
-        </View>
 
         {/* Register */}
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-            <Text>New to the App?</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text style={{ color: '#AD40AF', fontWeight: '700' }}> Register</Text>
-            </TouchableOpacity>
-            </View>
-
+          <Text>New to the App?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <Text style={{ color: '#AD40AF', fontWeight: '700' }}> Register</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default LoginScreen
+export default LoginScreen;
