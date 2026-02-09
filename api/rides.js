@@ -52,7 +52,7 @@ export const postRide = async ({
 }) => {
    
     const person_id = userId; // Replace with actual person ID
-    const response = await apiFetch(`/persons/${person_id}/rides/`, {
+    const response = await apiFetch(`/users/persons/${person_id}/rides/`, {
         method: 'POST',
         body: JSON.stringify({
             id: person_id,
@@ -86,7 +86,7 @@ export const bookRide = async (rideId, userId) => {
 
 
 export const acceptRideRequest = async (requestId, userId) => {
-    const response = await apiFetch(`/ride-requests/${requestId}/accept/`, {
+    const response = await apiFetch(`/rides/ride-requests/${requestId}/accept/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export const acceptRideRequest = async (requestId, userId) => {
 };
 
 export const rejectRideRequest = async (requestId, userId) => {
-    const response = await apiFetch(`/ride-requests/${requestId}/reject/`, {
+    const response = await apiFetch(`/rides/ride-requests/${requestId}/reject/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { fetchRiderBookings, fetchDriverBookings, confirmRide, rejectRide,  } from '../api/bookings';
+import { fetchRiderBookings, fetchDriverBookings, confirmRide, rejectRide, cancelRide  } from '../api/bookings';
 
 
 const STATUS_COLORS = {
@@ -35,13 +35,60 @@ const MyCommutesScreen = () => {
             setLoading(false);
         }
     };
+    const onAccept = async (bookingId) => {
+        try {
+            await confirmRide(bookingId, user.id);
+            setCommutes(prev =>
+                prev.map(b =>
+                    b.id === bookingId
+                        ? { ...b, status: 'confirmed' }
+                        : b
+                )
+            );            
+        } catch (error) {
+            console.error("Error confirming ride:", error);
+        }
+        
+    }
+    const onReject = async (bookingId) => {
+        try {
+            await rejectRide(bookingId, user.id);
+            setCommutes(prev =>
+                prev.map(b =>
+                    b.id === bookingId
+                        ? { ...b, status: 'rejected' }
+                        : b
+                )
+            );
+        } catch (error) {
+            console.error("Error rejecting ride:", error);
+        }
+    };
 
-    const renderItem = ({ item }) => (
-        <View style={[styles.card, item.status !== 'pending' && styles.disabledCard]}>
-            <View style={styles.rowBetween}>
-                <Text style={styles.routeText}>{item.start_location} → {item.end_location}</Text>
-                <View style={[styles.badge, { backgroundColor: STATUS_COLORS[item.status] }]}>
-                    <Text style={styles.badgeText}>{item.status.toUpperCase()}</Text>
+    const onCancel = async (bookingId) => {
+        try {
+            await cancelRide(bookingId, user.id);
+            setCommutes(prev =>
+                prev.map(b =>
+                    b.id === bookingId
+                        ? { ...b, status: 'cancelled' }
+                        : b
+                )
+            );
+        } catch (error) {
+            console.error("Error cancelling ride:", error);
+        }
+    };
+    
+
+    const renderItem = ({ item }) => {
+        const isInactive = item.status === 'rejected' || item.status === 'cancelled';
+        return (
+            <View style={[styles.card, isInactive && styles.disabledCard]}>
+                <View style={styles.rowBetween}>
+                    <Text style={styles.routeText}>{item.start_location} → {item.end_location}</Text>
+                    <View style={[styles.badge, { backgroundColor: STATUS_COLORS[item.status] }]}>
+                        <Text style={styles.badgeText}>{item.status.toUpperCase()}</Text>
                 </View>
             </View>
 
@@ -57,13 +104,14 @@ const MyCommutesScreen = () => {
                     </TouchableOpacity>
                 </View>
             )}
-            {activeTab === 'rider' && item.status === 'confirmed' && (
+            {activeTab === 'rider' && ['pending', 'confirmed'].includes(item.status) && (
                 <TouchableOpacity style={styles.cancelBtn} onPress={() => onCancel(item.id)}>
                 <Text style={styles.btnText}>Cancel</Text>
                 </TouchableOpacity>
             )}
         </View>
-);
+    );
+}
 
     return (
     <View style={styles.container}>
@@ -156,4 +204,6 @@ btnText: { color: '#FFFFFF', textAlign: 'center', fontWeight: '600' },
 loadingText: { textAlign: 'center', marginTop: 20 },
 emptyText: { textAlign: 'center', marginTop: 40, color: '#6B7280' },
 });
+
+
 export default MyCommutesScreen;

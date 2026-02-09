@@ -32,3 +32,15 @@ export const rejectRide = async (bookingId, userId) => {
 
     return response;
 };
+
+export const cancelRide = async (bookingId, userId) => {
+    const response = await apiFetch(`/bookings/${bookingId}/cancel/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+    });
+
+    return response;
+};

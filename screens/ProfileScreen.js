@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';
 
 function ProfileScreen() {
     const { user } = useContext(AuthContext);
