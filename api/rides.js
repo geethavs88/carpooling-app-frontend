@@ -1,4 +1,6 @@
 import { apiFetch } from './client';
+import { AuthContext } from '../context/AuthContext';
+
 
 
 // const API_BASE_URL = 'http://10.0.2.2:8000/api';
@@ -45,13 +47,16 @@ export const postRide = async ({
     startDateTimeISO,
     endDateTimeISO,
     rideType,
-    availableSeats = null, 
+    availableSeats = null,
+    userId
 }) => {
-    const person_id = 1; // Replace with actual person ID
+   
+    const person_id = userId; // Replace with actual person ID
     const response = await apiFetch(`/persons/${person_id}/rides/`, {
         method: 'POST',
         body: JSON.stringify({
             id: person_id,
+
             ride_type: rideType,
             start_location: startLocation,
             end_location: destination,
@@ -65,4 +70,42 @@ export const postRide = async ({
     return response;
 };
 
+
+export const bookRide = async (rideId, userId) => {
+    const response = await apiFetch(`/rides/${rideId}/bookings/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+    });
+
+    return response;
+};
+
+
+
+export const acceptRideRequest = async (requestId, userId) => {
+    const response = await apiFetch(`/ride-requests/${requestId}/accept/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+    });
+
+    return response;
+};
+
+export const rejectRideRequest = async (requestId, userId) => {
+    const response = await apiFetch(`/ride-requests/${requestId}/reject/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
+    });
+
+    return response;
+};
 

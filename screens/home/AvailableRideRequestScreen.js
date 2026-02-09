@@ -1,10 +1,14 @@
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import RequestRideCards from '../../components/RequestRideCards';
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { searchRides } from '../../api/rides.js';
 import { postRide } from '../../api/rides';
+import { AuthContext } from '../../context/AuthContext';
+import { acceptRideRequest } from '../../api/rides.js';
+import { rejectRideRequest } from '../../api/rides.js';
 
 const AvailableRideRequestScreen = ({ route }) => {
+    const { user } = useContext(AuthContext);
     const { search } = route.params;
     const {
     startLocation,
@@ -53,22 +57,38 @@ const AvailableRideRequestScreen = ({ route }) => {
         .finally(() => setLoading(false));
     }, []);
     
-    const handleAccept = (request) => {
-        setRemainingSeats((prev) => prev - 1);
-        setRideRequests(prev => prev.map(
-            req => req.id === request.id
-                ? { ...req, status: 'accepted' }
-                : req
-        ));
-    };
-    const handleReject = (requestId) => {
-        setRideRequests(prev =>
-            prev.map(req =>
+    const handleAccept = async (requestId) => {
+        try {
+            const updated = await acceptRideRequest(requestId, user.id);
+
+            // remove from AvailableRideRequestScreen
+            setRideRequests(prev =>
+                prev.map(req =>
                 req.id === requestId
-                    ? { ...req, status: 'rejected' }
-                    : req
+                ? { ...req, status: updated.status.toUpperCase() }
+                : req
             )
+
         );
+        setRemainingSeats(updated.available_seats);
+        } catch (e) {
+            alert(e.message);
+        }
+    };
+
+    const handleReject = async (requestId) => {
+        try {
+            await rejectRideRequest(requestId, user.id);
+            setRideRequests(prev =>
+                prev.map(req =>
+                    req.id === requestId
+                        ? { ...req, status: 'REJECTED' }
+                        : req
+                )
+            );
+        } catch (e) {
+            alert(e.message);
+        }
     };
     const handlePostRideRequest = async () => {
         try {
@@ -79,6 +99,7 @@ const AvailableRideRequestScreen = ({ route }) => {
                 endDateTimeISO: new Date(endDateTime).toISOString(),
                 availableSeats,
                 rideType: 'OFFER',
+                userId: user.id,
             });
 
             alert('Ride offer posted successfully!');
@@ -90,7 +111,7 @@ const AvailableRideRequestScreen = ({ route }) => {
     const renderItem = ({ item }) => (
         <RequestRideCards
             request={item}
-            onAccept={() => handleAccept(item)}
+            onAccept={() => handleAccept(item.id)}
             onReject={() => handleReject(item.id)}
         />
     );

@@ -3,19 +3,19 @@ import { NavigationContainer } from "@react-navigation/native";
 import { View, Text, ActivityIndicator } from 'react-native';
 import AuthStack from './AuthStack';
 import AppTabs from './AppTabs';
+import { AuthContext } from '../context/AuthContext';
 
 
 function RootNavigator() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState(null);
 
     return (
+        <AuthContext.Provider value={{ user, setUser }}>
         <NavigationContainer>
-            {isLoggedIn ? (
-                <AppTabs />
-            ) : (
-                <AuthStack setIsLoggedIn={setIsLoggedIn} />
-            )}
+            {user ? (<AppTabs />) : (<AuthStack />)}
         </NavigationContainer>
+        </AuthContext.Provider>
     );
 }
 

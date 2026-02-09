@@ -1,10 +1,13 @@
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import OfferRideCards from '../../components/OfferRideCards';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { searchRides } from '../../api/rides';
 import { postRide } from '../../api/rides';
+import { AuthContext } from '../../context/AuthContext';
+import { bookRide } from '../../api/rides';
 
 function AvailableRidesScreen({ route }){
+    const { user } = useContext(AuthContext);
     const { search } = route.params;
     const { startLocation, destination, startDateTime, endDateTime } = search;
     const [rideRequests, setRideRequests] = useState([]);
@@ -72,8 +75,15 @@ function AvailableRidesScreen({ route }){
             .finally(() => setLoading(false));
         }, [startLocation, destination, startDateTime, endDateTime]);
 
-    const handleRequestRide = (rideId) => {
+    const handleRequestRide = async (rideId) => {
         setRequestedRideIds((prev) => [...prev, rideId]);
+        try {
+            await bookRide(rideId, user.id);
+            setRequestedRideIds((prev) => [...prev, rideId]);
+            alert('Ride booked successfully!');
+        } catch (err) {
+            alert(err.message);
+        }
     };
     if (loading) {
         return (
@@ -99,6 +109,7 @@ function AvailableRidesScreen({ route }){
                 startDateTimeISO: new Date(startDateTime).toISOString(),
                 endDateTimeISO: new Date(endDateTime).toISOString(),
                 rideType: 'REQUEST',
+                userId: user.id,
             });
 
             alert('Ride request posted successfully!');

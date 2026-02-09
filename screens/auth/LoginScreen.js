@@ -5,27 +5,33 @@ import {
   TextInput,
   Image,
   } from 'react-native'
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Alert } from 'react-native';
 import { login } from '../../api/login';
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { MaterialIcons, Ionicons } from '@expo/vector-icons'
+import { AuthContext } from '../../context/AuthContext';
 
 
 const LoginScreen = ({ navigation, setIsLoggedIn }) => {
+  const { setUser } = useContext(AuthContext);
   const [username,setUsername] = useState('');
   const [password,setPassword] = useState('');
   const handleLogin = async () => {
     // Perform login logic here
     // On successful login, update the state
     try {
-        const user = await login(username,password);
-        console.log('User logged in:', user);
-        setIsLoggedIn(true);
-    
+        const res = await login(username,password);
+        setUser({
+          id: res.user_id,
+          username: res.username
+        })
+        console.log('User logged in:', res);
+
       // navigation.replace('Home', { user });
     } catch (error) {
-        Alert.alert('Login failed', 'Invalid credentials');
+      console.error('Login error:', error);
+      Alert.alert('Login failed', 'Invalid credentials');
     }
     
     // setIsLoggedIn(true);

@@ -1,12 +1,14 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
+import { useState,useContext } from 'react';
 import InputField from '../../components/InputField';
 import PrimaryButton from '../../components/PrimaryButton';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { AuthContext } from '../../context/AuthContext';
 
 
 function DriveScheduleScreen({ navigation }) {
- 
+    const { user } = useContext(AuthContext);
+
     const [startLocation, setStartLocation] = useState('');
     const [destination, setDestination] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);

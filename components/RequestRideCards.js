@@ -3,8 +3,16 @@ import { TouchableOpacity } from 'react-native';
 // import PrimaryButton from './PrimaryButton  ';
 
 const RequestRideCards = ({ request, onAccept, onReject }) => {
+    const status = (request.status || 'PENDING').toUpperCase();
+    const isDisabled = status !== 'PENDING' || request.available_seats <= 0;
+    const getCardStyle = (status) => {
+        const s = (status || 'PENDING').toUpperCase();
+        if (s === 'CONFIRMED') return styles.acceptedCard;
+        if (s === 'REJECTED') return styles.rejectedCard;
+        return styles.card;
+    };
     return (
-        <View style={styles.card}>
+        <View style={[styles.card, getCardStyle(request.status)]}>
             <Text style={styles.title}>{request.rideId}</Text>
             <Text>From: {request.start_location}</Text>
             <Text>To: {request.end_location}</Text>
@@ -12,10 +20,18 @@ const RequestRideCards = ({ request, onAccept, onReject }) => {
             <Text>Latest: {new Date(request.latest_time).toLocaleString()}</Text>
             <Text>Status: {request.status}</Text>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={onAccept} style={styles.button}>
+                <TouchableOpacity 
+                onPress={onAccept} 
+                style={[styles.button, isDisabled && styles.disabledButton]} 
+                disabled={isDisabled}
+                >
                     <Text style={styles.buttonText}>Accept</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={onReject} style={styles.button}>
+                <TouchableOpacity 
+                onPress={onReject} 
+                style={[styles.button, isDisabled && styles.disabledButton]} 
+                disabled={isDisabled}
+                >
                     <Text style={styles.buttonText}>Reject</Text>
                 </TouchableOpacity>
             </View>
@@ -58,6 +74,15 @@ const styles = StyleSheet.create({
         color: '#fff',
         textAlign: 'center',
     },
+    acceptedCard: {
+        backgroundColor: '#E6F9F0',
+    },
+    rejectedCard: {
+        backgroundColor: '#FDECEC',
+    },
+    disabledButton: {
+        backgroundColor: '#B0B0B0',
+},
 });
 
 export default RequestRideCards;
