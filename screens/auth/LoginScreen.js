@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
+  ActivityIndicator,
   } from 'react-native'
 import { useState, useContext } from 'react';
 import { Alert } from 'react-native';
@@ -15,11 +16,17 @@ import { AuthContext } from '../../context/AuthContext';
 
 const LoginScreen = ({ navigation, setIsLoggedIn }) => {
   const { setUser } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   const [username,setUsername] = useState('');
   const [password,setPassword] = useState('');
   const handleLogin = async () => {
     // Perform login logic here
     // On successful login, update the state
+    if (!username || !password) {
+      Alert.alert('Error', 'Please fill both fields');
+      return;
+    }
+    setLoading(true);
     try {
         const res = await login(username,password);
         setUser({
@@ -33,113 +40,75 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
       console.error('Login error:', error);
       Alert.alert('Login failed', 'Invalid credentials');
     }
-    
+    finally {
+      setLoading(false);
+    }
     // setIsLoggedIn(true);
   };
   return (
-    <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
-      <View style={{ alignItems: 'center', paddingHorizontal: 25 }}>
+    <View style={{ flex: 1, justifyContent: 'center', padding: 20, backgroundColor: '#fff' }}>
+      <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 30, textAlign: 'center' }}>
+        Login
+      </Text>
 
-        <Text
-          style={{
-            fontFamily: 'Roboto-Medium',
-            fontSize: 28,
-            fontWeight: '500',
-            color: '#333',
-            marginBottom: 30
-          }}
-        >
-          Login 
-        </Text>
+      <TextInput
+        style={{ 
+          borderWidth: 1, 
+          borderColor: '#ccc', 
+          padding: 15, 
+          borderRadius: 8, 
+          marginBottom: 15,
+          fontSize: 16
+        }}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+        autoCapitalize="none"
+        editable={!loading}
+      />
 
-        {/* username */}
-        <View
-          style={{
-            flexDirection: 'row',
-            borderBottomColor: '#ccc',
-            borderBottomWidth: 1,
-            paddingBottom: 8,
-            marginBottom: 25,
-            alignItems: 'center'
-          }}
-        >
-          <MaterialIcons
-            name="person-outline"
-            size={20}
-            color="#666"
-            style={{ marginRight: 5 }}
-          />
-          <TextInput
-            placeholder="username"
-            style={{ flex: 1, paddingVertical: 0 }}
-            keyboardType="default"
-            onChangeText={setUsername}
-          />
-        </View>
+      <TextInput
+        style={{ 
+          borderWidth: 1, 
+          borderColor: '#ccc', 
+          padding: 15, 
+          borderRadius: 8, 
+          marginBottom: 20,
+          fontSize: 16
+        }}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        autoCapitalize="none"
+        editable={!loading}
+      />
 
-        {/* Password */}
-        <View
-          style={{
-            flexDirection: 'row',
-            borderBottomColor: '#ccc',
-            borderBottomWidth: 1,
-            paddingBottom: 8,
-            marginBottom: 25,
-            alignItems: 'center'
-          }}
-        >
-          <Ionicons
-            name="lock-closed-outline"
-            size={20}
-            color="#666"
-            style={{ marginRight: 5 }}
-          />
-          <TextInput
-            placeholder="Password"
-            style={{ flex: 1, paddingVertical: 0 }}
-            secureTextEntry={true}
-            onChangeText={setPassword}
-          />
+      <TouchableOpacity
+        onPress={handleLogin}
+        disabled={loading}
+        style={{ 
+          backgroundColor: loading ? '#ccc' : '#AD40AF', 
+          padding: 18, 
+          borderRadius: 8, 
+          alignItems: 'center' 
+        }}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Login</Text>
+        )}
+      </TouchableOpacity>
 
-          <TouchableOpacity>
-            <Text style={{ color: '#AD40AF', fontWeight: '700' }}>
-              Forgot?
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-       
-        <TouchableOpacity onPress={handleLogin}
-          style={{
-            backgroundColor: '#AD40AF',
-            padding: 20,
-            borderRadius: 10,
-            marginBottom: 30,
-            width: '100%'
-          }}
-        >
-          <Text
-            style={{
-              textAlign: 'center',
-              fontWeight: '700',
-              fontSize: 16,
-              color: '#fff'
-            }}
-          >
-            Login
-          </Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
+        <Text>Don't have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+          <Text style={{ color: '#AD40AF', fontWeight: 'bold' }}>Register</Text>
         </TouchableOpacity>
-
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-            <Text>New to the App?</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text style={{ color: '#AD40AF', fontWeight: '700' }}> Register</Text>
-            </TouchableOpacity>
-            </View>
-
       </View>
-    </SafeAreaView>
-  )
-}
+    </View>
+  );
+};
 
-export default LoginScreen
+export default LoginScreen;
