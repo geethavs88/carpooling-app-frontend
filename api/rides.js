@@ -17,7 +17,7 @@ export function searchRides({
     rideType,
     driverId    //new
 }) {
-    const query = new URLSearchParams({
+    const params = new URLSearchParams({
         start_location: startLocation,
         end_location: endLocation,
         earliest_datetime: earliestDateTimeISO,
@@ -27,10 +27,14 @@ export function searchRides({
         end_latitude: destinationCoords?.latitude,
         end_longitude: destinationCoords?.longitude,
         ride_type: rideType,
-        // driver_id: driverId,   //new
-    }).toString();
-    console.log(`${query}`)
 
+    })
+    // ONLY include driver_id if it exists
+    if (driverId) {
+        params.driver_id = driverId;
+    }
+
+    const query = new URLSearchParams(params).toString();
     return apiFetch(`/rides/search/?${query}`);
 }
 

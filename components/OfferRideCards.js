@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     requestButton: {
         marginTop: 8,
         padding: 10,
-        backgroundColor: '#007bff',
+        backgroundColor: '#AD40AF',
         borderRadius: 6,
         alignItems: 'center',
     },

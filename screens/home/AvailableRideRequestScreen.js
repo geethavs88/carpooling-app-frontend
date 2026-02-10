@@ -55,7 +55,7 @@ const AvailableRideRequestScreen = ({ route }) => {
             earliestDateTimeISO: new Date(startDateTime).toISOString(),
             latestDateTimeISO: new Date(endDateTime).toISOString(),
             rideType: 'REQUEST',
-            // driverId: user.id, //new
+            driverId: user.id, //new
         })
         .then(setRideRequests)
         .catch(err => setError(err.message))
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
         marginTop: 12,
     },
     button: {
-        backgroundColor: '#007BFF',
+        backgroundColor: '#AD40AF',
         borderRadius: 4,
         padding: 10,
         flex: 1,
