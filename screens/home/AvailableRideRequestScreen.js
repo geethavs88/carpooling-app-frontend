@@ -13,6 +13,8 @@ const AvailableRideRequestScreen = ({ route }) => {
     const {
     startLocation,
     destination,
+    startCoords,
+    destinationCoords,
     startDateTime,
     endDateTime,
     availableSeats
@@ -48,14 +50,17 @@ const AvailableRideRequestScreen = ({ route }) => {
         searchRides({
             startLocation,
             endLocation: destination,
+            startCoords: search.startCoords,
+            destinationCoords: search.destinationCoords,
             earliestDateTimeISO: new Date(startDateTime).toISOString(),
             latestDateTimeISO: new Date(endDateTime).toISOString(),
             rideType: 'REQUEST',
+            // driverId: user.id, //new
         })
         .then(setRideRequests)
         .catch(err => setError(err.message))
         .finally(() => setLoading(false));
-    }, []);
+    }, [startLocation, destination, startDateTime, endDateTime, search.startCoords, search.destinationCoords]);
     
     const handleAccept = async (requestId) => {
         try {
@@ -95,6 +100,8 @@ const AvailableRideRequestScreen = ({ route }) => {
             await postRide({
                 startLocation,
                 destination,
+                startCoords: search.startCoords,
+                destinationCoords: search.destinationCoords,
                 startDateTimeISO: new Date(startDateTime).toISOString(),
                 endDateTimeISO: new Date(endDateTime).toISOString(),
                 availableSeats,

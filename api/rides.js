@@ -10,16 +10,24 @@ import { AuthContext } from '../context/AuthContext';
 export function searchRides({
     startLocation,
     endLocation,
+    startCoords,         // new
+    destinationCoords,   // new
     earliestDateTimeISO,
     latestDateTimeISO,
     rideType,
+    driverId    //new
 }) {
     const query = new URLSearchParams({
         start_location: startLocation,
         end_location: endLocation,
         earliest_datetime: earliestDateTimeISO,
         latest_datetime: latestDateTimeISO,
+        start_latitude: startCoords?.latitude,
+        start_longitude: startCoords?.longitude,
+        end_latitude: destinationCoords?.latitude,
+        end_longitude: destinationCoords?.longitude,
         ride_type: rideType,
+        // driver_id: driverId,   //new
     }).toString();
     console.log(`${query}`)
 
@@ -44,6 +52,8 @@ export function searchRides({
 export const postRide = async ({
     startLocation,
     destination,
+    startCoords,       // new
+    destinationCoords, // new
     startDateTimeISO,
     endDateTimeISO,
     rideType,
@@ -60,6 +70,10 @@ export const postRide = async ({
             ride_type: rideType,
             start_location: startLocation,
             end_location: destination,
+            start_latitude: startCoords?.latitude,        // added
+            start_longitude: startCoords?.longitude,      // added
+            end_latitude: destinationCoords?.latitude,    // added
+            end_longitude: destinationCoords?.longitude,  // added
             earliest_time: startDateTimeISO,
             latest_time: endDateTimeISO,
             available_seats: availableSeats,

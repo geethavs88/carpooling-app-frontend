@@ -5,6 +5,9 @@ import { TouchableOpacity } from 'react-native';
 const RequestRideCards = ({ request, onAccept, onReject }) => {
     const status = (request.status || 'PENDING').toUpperCase();
     const isDisabled = status !== 'PENDING' || request.available_seats <= 0;
+    // const status = (request.status ?? 'PENDING').toUpperCase();   //new 
+    // const isAcceptDisabled = status !== 'PENDING';                  //new
+    // const isRejectDisabled = status !== 'PENDING';                  //new
     const getCardStyle = (status) => {
         const s = (status || 'PENDING').toUpperCase();
         if (s === 'CONFIRMED') return styles.acceptedCard;

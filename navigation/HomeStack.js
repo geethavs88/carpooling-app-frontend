@@ -7,6 +7,7 @@ import AvailableRideRequestScreen from "../screens/home/AvailableRideRequestScre
 import RideDetailsScreen from "../screens/home/RideDetailsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import MyCommutesScreen from "../screens/MyCommutesScreen";
+import MapPicker from '../components/MapPicker';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,7 @@ function HomeStack() {
         <Stack.Navigator>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="RideSchedule" component={RideScheduleScreen} />
+            <Stack.Screen name="MapPicker" component={MapPicker} />
             <Stack.Screen name="DriveSchedule" component={DriveScheduleScreen} />
             <Stack.Screen name="AvailableRides" component={AvailableRidesScreen} />
             <Stack.Screen name="AvailableRideRequests" component={AvailableRideRequestScreen} />

@@ -1,12 +1,21 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { useState, useContext } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+import { useState, useContext, useEffect } from 'react';
 import InputField from '../../components/InputField';
 import PrimaryButton from '../../components/PrimaryButton';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { AuthContext } from '../../context/AuthContext';
+import { useRoute } from '@react-navigation/native';
+import { KeyboardAvoidingView, Platform } from 'react-native';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import MapView, { Marker } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
+import { GOOGLE_MAPS_API_KEY } from '../../config'; // Make sure to export this from your config.js
+
+const GOOGLE_API_KEY = GOOGLE_MAPS_API_KEY;
 
 function RideScheduleScreen({ navigation }) {
     const { user } = useContext(AuthContext);
+
 
     const [startLocation, setStartLocation] = useState('');
     const [destination, setDestination] = useState('');
@@ -15,6 +24,28 @@ function RideScheduleScreen({ navigation }) {
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
     const [activePicker, setActivePicker] = useState(null); 
+
+    const route = useRoute();
+    const [startCoords, setStartCoords] = useState(null); // { latitude, longitude }
+    const [destinationCoords, setDestinationCoords] = useState(null);
+
+    // const [routeDistance, setRouteDistance] = useState(null);
+    // const [routeDuration, setRouteDuration] = useState(null);
+
+    
+    // useEffect(() => {
+    //     if (route.params) {
+    //         const { type, name, latitude, longitude } = route.params;
+
+    //         if (type === 'start') {
+    //             setStartLocation(name);
+    //             setStartCoords({ latitude, longitude });
+    //         } else if (type === 'destination') {
+    //             setDestination(name);
+    //             setDestinationCoords({ latitude, longitude });
+    //         }
+    //     }
+    // }, [route.params]);
 
 
     const showDatePicker = () => {
@@ -66,25 +97,108 @@ function RideScheduleScreen({ navigation }) {
             search: {
                 startLocation,
                 destination,
+                startCoords,
+                destinationCoords,                
                 startDateTime,
-                endDateTime
+                endDateTime,
+
             }
         });
     };
+//     const styles = StyleSheet.create({
+//     container: {
+//         flexGrow: 1,
+//         padding: 12,
+//     },
+//     dateTimePicker: {
+//         width: '100%',
+//         padding: 12,
+//         borderWidth: 1,
+//         borderColor: '#ccc',
+//         borderRadius: 4,
+//         marginBottom: 12,
+//     },
+//     });
+//     const autoCompleteStyles = {
+//         container: { flex: 0 },
+//         textInput: {
+//             borderWidth: 1,
+//             borderColor: '#ccc',
+//             borderRadius: 4,
+//             padding: 12,
+//             fontSize: 16,
+//         },
+//         listView: { 
+//             position: 'absolute',
+//             top: 50,
+//             zIndex: 2000, 
+//             elevation: 2000,
+//             backgroundColor: 'white'
+//         },
+// };
 
     return (
-        <View style={styles.rideScheduleInputContainer}>
-            <Text>Ride Schedule</Text>
-            <InputField
-                placeholder="Start Location"
-                value={startLocation}
-                onChangeText={setStartLocation}
-            />
-            <InputField
+        <KeyboardAvoidingView behavior="height" style={{ flex: 1 }} keyboardVerticalOffset={Platform.OS === 'android' ? 80 : 0}>
+            <View style={{ flex: 1 }}>
+                <ScrollView
+                    keyboardShouldPersistTaps="handled"
+                    contentContainerStyle={styles.container}
+                    nestedScrollEnabled={true}
+                >
+                <View style={{ zIndex: 1000, elevation: 1000, marginBottom: 12 }}>
+                    <GooglePlacesAutocomplete
+                        placeholder="Start Location"
+                        fetchDetails={true}
+                        onPress={(data, details = null) => {
+                            setStartLocation(data.description);
+                            setStartCoords({
+                                latitude: details.geometry.location.lat,
+                                longitude: details.geometry.location.lng,
+                            });
+                        }}
+                        query={{ key: GOOGLE_API_KEY, language: 'en' }}
+                        styles={autoCompleteStyles}
+                        listViewDisplayed='auto'  // Add this
+                        enablePoweredByContainer={false}  // Optional: removes "Powered by Google"
+                    />
+                </View>
+
+            <View style={{ zIndex: 1000, elevation: 1000, marginBottom: 12 }}>
+            <GooglePlacesAutocomplete
                 placeholder="Destination"
-                value={destination}
-                onChangeText={setDestination}
-            />
+                fetchDetails={true}
+                onPress={(data, details = null) => {
+                    setDestination(data.description);
+                    setDestinationCoords({
+                    latitude: details.geometry.location.lat,
+                    longitude: details.geometry.location.lng,
+                    });
+                }}
+                query={{ key: GOOGLE_API_KEY, language: 'en' }}
+                styles={autoCompleteStyles}
+                listViewDisplayed='auto'  // Add this
+                enablePoweredByContainer={false}  // Optional: removes "Powered by Google"                
+                />
+            </View>
+
+            {/* Map Preview */}
+            {startCoords && destinationCoords && (
+            <View style={{ height: 200, marginBottom: 12 }}>
+                <MapView
+                style={{ flex: 1 }}
+                initialRegion={{
+                    latitude: (startCoords.latitude + destinationCoords.latitude) / 2,
+                    longitude: (startCoords.longitude + destinationCoords.longitude) / 2,
+                    latitudeDelta: Math.abs(startCoords.latitude - destinationCoords.latitude) * 2.5,
+                    longitudeDelta: Math.abs(startCoords.longitude - destinationCoords.longitude) * 2.5,
+                }}
+                >
+                <Marker coordinate={startCoords} title="Start" />
+                <Marker coordinate={destinationCoords} title="Destination" />
+                </MapView>
+            </View>
+            )}
+
             <TouchableOpacity style={styles.dateTimePicker} onPress={showDatePicker}>
                 <Text>
                     {date ? date.toDateString() : 'Select Date'}
@@ -129,13 +243,42 @@ function RideScheduleScreen({ navigation }) {
             />
 
             <PrimaryButton onPress={handleSearch}>Find Available Rides </PrimaryButton>
-    </View>
-    );
-}
+        </ScrollView>
+        </View>
+    </KeyboardAvoidingView>
+);
+
+    // const styles = StyleSheet.create({
+    // container: {
+    //     flexGrow: 1,
+    //     padding: 12,
+    // },
+    // dateTimePicker: {
+    //     width: '100%',
+    //     padding: 12,
+    //     borderWidth: 1,
+    //     borderColor: '#ccc',
+    //     borderRadius: 4,
+    //     marginBottom: 12,
+    // },
+    // });
+    // const autoCompleteStyles = {
+    // container: { flex: 0 },
+    // textInput: {
+    //     borderWidth: 1,
+    //     borderColor: '#ccc',
+    //     borderRadius: 4,
+    //     padding: 12,
+    //     fontSize: 16,
+    // },
+    // listView: { zIndex: 2000, elevation: 2000 },
+    // };
+
+}  
 const styles = StyleSheet.create({
-    rideScheduleInputContainer: {
-        flex:1,
-        padding:8
+    container: {
+        flexGrow: 1,
+        padding: 12,
     },
     dateTimePicker: {
         width: '100%',
@@ -145,6 +288,24 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         marginBottom: 12,
     },
-}
-);
+});
+
+const autoCompleteStyles = {
+    container: { flex: 0 },
+    textInput: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 4,
+        padding: 12,
+        fontSize: 16,
+    },
+    listView: { 
+        position: 'absolute',
+        top: 50,
+        zIndex: 2000, 
+        elevation: 2000,
+        backgroundColor: 'white'
+    },
+};
+
 export default RideScheduleScreen;
