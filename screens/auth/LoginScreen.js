@@ -47,9 +47,14 @@ const LoginScreen = ({ navigation, setIsLoggedIn }) => {
   };
   return (
     <View style={{ flex: 1, justifyContent: 'center', padding: 20, backgroundColor: '#fff' }}>
-      <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 30, textAlign: 'center' }}>
+      <Text style={{ fontSize: 35, fontWeight: 'bold', marginBottom: 30, textAlign: 'center' }}>
+        Carpool Login
+      </Text>      
+      
+
+      {/* <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 30, textAlign: 'center' }}>
         Login
-      </Text>
+      </Text> */}
 
       <TextInput
         style={{ 
