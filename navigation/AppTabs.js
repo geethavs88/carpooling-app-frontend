@@ -29,7 +29,7 @@ function AppTabs() {
             tabBarActiveTintColor: '#AD40AF',
             tabBarInactiveTintColor: 'gray',
             tabBarStyle: {
-            height: 60,
+            height: 90,
             paddingBottom: 6,
             },
             tabBarLabelStyle: {
